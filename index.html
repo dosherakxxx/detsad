@@ -1,0 +1,1793 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="Findet.kz - Поиск детских садов в Астане" />
+    <meta name="author" content="Findet.kz" />
+    <title>Findet.kz - Найди лучший детский сад</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon"
+        href="https://w7.pngwing.com/pngs/702/767/png-transparent-child-art-hand-painted-watercolor-painting-child-hand.png" />
+    <!-- Custom Google font-->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <!-- Bootstrap icons-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="styles.css" rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8f9fa;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        body.loaded {
+            opacity: 1;
+        }
+
+        .navbar {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #343a40;
+        }
+
+        .header-subtitle {
+            font-size: 1.25rem;
+            color: #6c757d;
+        }
+
+        .card-header {
+            background: linear-gradient(90deg, #007bff, #6610f2);
+        }
+
+        .card-header h5 {
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+
+        .list-group-item {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .list-group-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        footer {
+            background-color: #343a40;
+            color: #ffffff;
+        }
+
+        footer a {
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        .clickable-card {
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .clickable-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .expanded-card {
+            transform: scale(1.1);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        #backToTop {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: none;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+
+        #backToTop:hover {
+            opacity: 0.8;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Добавляем стиль для черной рамки */
+        .black-border {
+            border: 2px solid black;
+            /* Черная рамка */
+        }
+
+        /* Добавляем стиль для эффекта наведения */
+        .btn-light-danger:hover {
+            background-color: #d6d6d6;
+            /* Серый цвет при наведении */
+            color: black;
+            /* Цвет текста */
+        }
+
+        .btn-outline-primary {
+            background-color: #f0f0f0;
+            /* Светло-серый фон */
+            color: #007bff;
+            /* Синий текст */
+            border-color: #007bff;
+            /* Синие рамки */
+        }
+
+        .btn-outline-primary:hover {
+            background-color: #e2e6ea;
+            /* Более темный серый при наведении */
+            color: #0056b3;
+            /* Более темный синий текст при наведении */
+            border-color: #0056b3;
+            /* Более темные синие рамки при наведении */
+        }
+
+        #map-container {
+            flex: 1;
+            /* Карта занимает равное пространство */
+            height: 100%;
+            /* Высота карты */
+            display: flex;
+            /* Flexbox для корректного выравнивания содержимого */
+            flex-direction: column;
+        }
+
+        .card {
+            height: 300px;
+            /* Фиксированная высота карточек */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-body {
+            overflow-y: auto;
+            /* Прокрутка для содержимого карточек */
+        }
+
+        .row.gx-5.align-items-center {
+            height: auto;
+            /* Убираем фиксированную высоту строки */
+        }
+
+        #map-container,
+        .card {
+            height: 100%;
+            /* Высота карты и каталога */
+        }
+
+        .col-lg-4,
+        .col-lg-8 {
+            display: flex;
+            /* Flexbox для выравнивания */
+            flex-direction: column;
+            min-height: 300px;
+            /* Минимальная высота для выравнивания */
+        }
+
+        .col-lg-8 {
+            height: 1074px;
+            /* Высота каталога */
+            overflow-y: auto;
+            /* Прокрутка для каталога */
+        }
+
+        .card-container {
+            /* Контейнер для каталога занимает оставшееся пространство */
+            flex: 0.7;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            /* Прокрутка для каталога */
+        }
+    </style>
+</head>
+
+<body class="d-flex flex-column h-100">
+    <main class="flex-shrink-0">
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light bg-white py-3">
+            <div class="container px-5">
+                <a class="navbar-brand" href="index.html"><span class="fw-bolder text-primary">Findet.kz</span></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation"><span
+                        class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0 small fw-bolder">
+                        <li class="nav-item"><a class="nav-link" href="index.html">Главная</a></li>
+                        <li class="nav-item"><a class="nav-link" href="resume.html">О нас</a></li>
+                        <li class="nav-item"><a class="nav-link" href="projects.html">Проекты</a></li>
+                        <li class="nav-item"><a class="nav-link" href="contact.html">Контакты</a></li>
+                    </ul>
+                    <div class="d-flex ms-lg-3">
+                        <a href="login.html" class="btn btn-outline-primary me-2">Войти</a>
+                        <a href="register.html" class="btn btn-primary">Регистрация</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <!-- Header-->
+        <header class="py-5 bg-light">
+            <div class="container">
+                <div class="row gx-5 align-items-center">
+                    <!-- Карта слева -->
+                    <div class="col-lg-4">
+                        <div id="map-container" class="bg-light">
+                            <div id="map"
+                                style="width: 100%; height: 300px; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                            </div>
+                            <div id="map-loader"
+                                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.8); display: flex; justify-content: center; align-items: center;">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Загрузка...</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <!-- Основные фильтры -->
+                            <div class="mb-3">
+                                <label for="priceFrom" class="form-label">Цена (в тенге):</label>
+                                <div class="d-flex">
+                                    <input type="number" class="form-control me-2" placeholder="от" id="priceFrom" />
+                                    <input type="number" class="form-control" placeholder="до" id="priceTo" />
+                                </div>
+                                <div class="mt-2">
+                                    <input type="range" class="form-range" id="priceRange" min="0" max="100000"
+                                        step="1000" oninput="priceOutput.value = this.value" />
+                                    <div class="text-center">
+                                        <output id="priceOutput">50000</output> тг
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Ползунок и опция "Сортировать по рейтингу" -->
+                            <div class="mb-3">
+                                <label for="ratingFilterMain" class="form-label">Рейтинг:</label>
+                                <input type="range" class="form-range" id="ratingFilterMain" min="1" max="5" step="1"
+                                    oninput="ratingOutputMain.value = this.value" />
+                                <div class="text-center">
+                                    <output id="ratingOutputMain">3</output> звезды
+                                </div>
+                                <!-- Кнопка "Сортировать по рейтингу" -->
+                                <div class="form-check form-switch mt-2">
+                                    <input class="form-check-input" type="checkbox" id="sortByRatingToggle" />
+                                    <label class="form-check-label small" for="sortByRatingToggle">Сортировать по
+                                        рейтингу</label>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="districtSelect" class="form-label">Район:</label>
+                                <select class="form-select" id="districtSelect">
+                                    <option selected>Выберите район</option>
+                                    <option value="esil">Есиль</option>
+                                    <option value="almaty">Алматы</option>
+                                    <option value="saryarka">Сарыарка</option>
+                                    <option value="baikonur">Байконур</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="gardenTypeSelect" class="form-label">Тип сада:</label>
+                                <select class="form-select" id="gardenTypeSelect">
+                                    <option selected>Выберите тип</option>
+                                    <option value="state">Государственный</option>
+                                    <option value="private">Частный</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Возраст ребёнка:</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="1-2" id="age1to2" />
+                                    <label class="form-check-label" for="age1to2">1–2 года</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="2-3" id="age2to3" />
+                                    <label class="form-check-label" for="age2to3">2–3 года</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="4-5" id="age4to5" />
+                                    <label class="form-check-label" for="age4to5">4–5 лет</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="6+" id="age6plus" />
+                                    <label class="form-check-label" for="age6plus">6+ лет</label>
+                                </div>
+                            </div>
+                            <!-- Кнопка "Расширенные фильтры" -->
+                            <button class="btn btn-outline-primary w-100 mt-3" data-bs-toggle="modal"
+                                data-bs-target="#filterModal">Расширенные фильтры</button>
+                            <button class="btn btn-primary w-100 mt-3" onclick="applyFilters()">Применить
+                                фильтры</button>
+                            <!-- Кнопка сброса фильтров -->
+                            <button class="btn btn-light-danger w-100 mt-2 black-border"
+                                onclick="resetFilters()">Сбросить фильтры</button>
+                        </div>
+                        <!-- Модальное окно -->
+                        <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="filterModalLabel">Расширенные фильтры</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <!-- Расширенные фильтры -->
+                                        <div class="mb-3">
+                                            <label class="form-label">Наличие камер:</label>
+                                            <select class="form-select">
+                                                <option selected>Выберите</option>
+                                                <option value="1">Да</option>
+                                                <option value="2">Нет</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Язык обучения:</label>
+                                            <select class="form-select">
+                                                <option selected>Выберите язык</option>
+                                                <option value="1">Казахский</option>
+                                                <option value="2">Русский</option>
+                                                <option value="3">Английский</option>
+                                                <option value="4">Билингвальный</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Рабочие часы:</label>
+                                            <select class="form-select">
+                                                <option selected>Выберите</option>
+                                                <option value="1">Полный день</option>
+                                                <option value="2">Полдня</option>
+                                                <option value="3">24/7</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Питание:</label>
+                                            <select class="form-select">
+                                                <option selected>Выберите</option>
+                                                <option value="1">Включено</option>
+                                                <option value="2">Без питания</option>
+                                                <option value="3">Вегетарианское меню</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Программа обучения:</label>
+                                            <select class="form-select">
+                                                <option selected>Выберите</option>
+                                                <option value="1">Монтессори</option>
+                                                <option value="2">Стандартная</option>
+                                                <option value="3">По авторской методике</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Наличие логопеда, психолога:</label>
+                                            <select class="form-select">
+                                                <option selected>Выберите</option>
+                                                <option value="1">Да</option>
+                                                <option value="2">Нет</option>
+                                            </select>
+                                        </div>
+                                        <!-- Фильтр по рейтингу -->
+                                        <div class="mb-3">
+                                            <label for="ratingFilter" class="form-label">Рейтинг:</label>
+                                            <input type="range" class="form-range" id="ratingFilter" min="1" max="5"
+                                                step="1" oninput="ratingOutput.value = this.value" />
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div class="text-center">
+                                                    <output id="ratingOutput">3</output> звезды
+                                                </div>
+                                                <div class="form-check form-switch ms-3">
+                                                    <input class="form-check-input" type="checkbox" id="sortByRating" />
+                                                    <label class="form-check-label small"
+                                                        for="sortByRating">Сортировать</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-light"
+                                            data-bs-dismiss="modal">Закрыть</button>
+                                        <button type="button" class="btn btn-primary">Применить</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Каталог справа -->
+                    <div class="col-lg-8">
+                        <div class="card-container">
+                            <div class="card">
+                                <div class="card-header text-white">
+                                    <h5 class="mb-0">Каталог детских садов</h5>
+                                </div>
+                                <div class="card-body" style="max-height: 700px; overflow-y: auto; height: 700px;">
+                                    <div class="row g-3">
+                                        <div class="col-12 mb-3">
+                                            <input type="text" id="searchInput" class="form-control mb-2"
+                                                placeholder="Введите название детского сада..."
+                                                oninput="searchKindergartens()" />
+                                        </div>
+                                        <!-- Каталог карточек -->
+                                        <div id="kindergartenCatalog" class="row g-3">
+                                            <div class="col-md-6 col-lg-4">
+                                                <div class="card h-100 clickable-card" id="nurorda"
+                                                    onclick="toggleCard(this)">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">Нурорда</h5>
+                                                        <div id="carousel-nurorda" class="carousel slide d-none"
+                                                            data-bs-ride="carousel">
+                                                            <div class="carousel-inner">
+                                                                <div class="carousel-item active">
+                                                                    <img src="https://avatars.mds.yandex.net/get-altay/6548191/2a0000018dccfa9d81469d86d1dfca5b5372/XXXL"
+                                                                        class="d-block w-100" alt="Фото 1">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 2">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 3">
+                                                                </div>
+                                                            </div>
+                                                            <button class="carousel-control-prev" type="button"
+                                                                data-bs-target="#carousel-nurorda" data-bs-slide="prev">
+                                                                <span class="carousel-control-prev-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Предыдущий</span>
+                                                            </button>
+                                                            <button class="carousel-control-next" type="button"
+                                                                data-bs-target="#carousel-nurorda" data-bs-slide="next">
+                                                                <span class="carousel-control-next-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Следующий</span>
+                                                            </button>
+                                                        </div>
+                                                        <p class="card-text d-none">Телефон: +7 (702) 041-61-90
+                                                            <br>🔹International kindergarten <br>🔹Халықаралық
+                                                            балабақша<br>🔹Қазақ, орыс, ағылшын топтары <br> ☎️+7 702
+                                                            041 6190
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-lg-4">
+                                                <div class="card h-100 clickable-card" id="kindergarten2"
+                                                    onclick="toggleCard(this)">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">АҚБӨПЕ</h5>
+                                                        <div id="carousel-kindergarten2" class="carousel slide d-none"
+                                                            data-bs-ride="carousel">
+                                                            <div class="carousel-inner">
+                                                                <div class="carousel-item active">
+                                                                    <img src="https://www.akbope.kz/images/about/1.jpg"
+                                                                        class="d-block w-100" alt="Фото 1">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtE4Oa4wGq2JGV4lpstyie0noTy2x9-oXLzw&s"
+                                                                        class="d-block w-100" alt="Фото 2">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 3">
+                                                                </div>
+                                                            </div>
+                                                            <button class="carousel-control-prev" type="button"
+                                                                data-bs-target="#carousel-kindergarten2"
+                                                                data-bs-slide="prev">
+                                                                <span class="carousel-control-prev-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Предыдущий</span>
+                                                            </button>
+                                                            <button class="carousel-control-next" type="button"
+                                                                data-bs-target="#carousel-kindergarten2"
+                                                                data-bs-slide="next">
+                                                                <span class="carousel-control-next-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Следующий</span>
+                                                            </button>
+                                                        </div>
+                                                        <p class="card-text d-none">Частный Садик <br> АҚБӨПЕ Номер
+                                                            телефона 87023883838 <br>Цены от 35тысяч тенге <br> </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-lg-4">
+                                                <div class="card h-100 clickable-card" id="kindergarten3"
+                                                    onclick="toggleCard(this)">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">Детский сад «Теремок Premium»</h5>
+                                                        <div id="carousel-kindergarten3" class="carousel slide d-none"
+                                                            data-bs-ride="carousel">
+                                                            <div class="carousel-inner">
+                                                                <div class="carousel-item active">
+                                                                    <img src="https://lh3.googleusercontent.com/p/AF1QipNbXPtHvZffQN65CeK61CYKny4m9BYm9sJUA28I=w408-h272-k-no"
+                                                                        class="d-block w-100" alt="Фото 1">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQU9TkWzldJMRZH7WlFEkX2AqehFrdAuBQgGQ&s"
+                                                                        class="d-block w-100" alt="Фото 2">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://avatars.mds.yandex.net/get-altay/13594632/2a00000193c9f0818c316b4b51ac443a787f/L_height"
+                                                                        class="d-block w-100" alt="Фото 3">
+                                                                </div>
+                                                            </div>
+                                                            <button class="carousel-control-prev" type="button"
+                                                                data-bs-target="#carousel-kindergarten3"
+                                                                data-bs-slide="prev">
+                                                                <span class="carousel-control-prev-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Предыдущий</span>
+                                                            </button>
+                                                            <button class="carousel-control-next" type="button"
+                                                                data-bs-target="#carousel-kindergarten3"
+                                                                data-bs-slide="next">
+                                                                <span class="carousel-control-next-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Следующий</span>
+                                                            </button>
+                                                        </div>
+                                                        <p class="card-text d-none">Рейтинг: 5звезд <br>Адресс: ул.
+                                                            Сарайшык 6, Астана <br>Номер: +77023060099 <br>Цена: </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-lg-4">
+                                                <div class="card h-100 clickable-card" onclick="toggleCard(this)">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">Растиград</h5>
+                                                        <div id="carousel-kindergarten4" class="carousel slide d-none"
+                                                            data-bs-ride="carousel">
+                                                            <div class="carousel-inner">
+                                                                <div class="carousel-item active">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 1">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 2">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 3">
+                                                                </div>
+                                                            </div>
+                                                            <button class="carousel-control-prev" type="button"
+                                                                data-bs-target="#carousel-kindergarten4"
+                                                                data-bs-slide="prev">
+                                                                <span class="carousel-control-prev-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Предыдущий</span>
+                                                            </button>
+                                                            <button class="carousel-control-next" type="button"
+                                                                data-bs-target="#carousel-kindergarten4"
+                                                                data-bs-slide="next">
+                                                                <span class="carousel-control-next-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Следующий</span>
+                                                            </button>
+                                                        </div>
+                                                        <p class="card-text d-none">Рейтинг: 5 <br>Адрес: ул. Родниковая
+                                                            14/1, Астана <br> Номера: +77172280500 <br>Цена:</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-lg-4">
+                                                <div class="card h-100 clickable-card" onclick="toggleCard(this)">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">Детский сад, Дарын</h5>
+                                                        <div id="carousel-kindergarten5" class="carousel slide d-none"
+                                                            data-bs-ride="carousel">
+                                                            <div class="carousel-inner">
+                                                                <div class="carousel-item active">
+                                                                    <img src="https://lh3.googleusercontent.com/p/AF1QipOGfdkDDe0g2aa1ytabM5Zoba6LYXidEtRVd95l=s680-w680-h510"
+                                                                        class="d-block w-100" alt="Фото 1">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://lh3.googleusercontent.com/p/AF1QipPaZZhH4c6tRowJ-qU2UwlS8i_y55NWgbtXMBHv=s680-w680-h510"
+                                                                        class="d-block w-100" alt="Фото 2">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://lh3.googleusercontent.com/p/AF1QipNk-qKyuTSCeBzjE-3p4IEdSayi1NGzJYz6VP0H=s680-w680-h510"
+                                                                        class="d-block w-100" alt="Фото 3">
+                                                                </div>
+                                                            </div>
+                                                            <button class="carousel-control-prev" type="button"
+                                                                data-bs-target="#carousel-kindergarten5"
+                                                                data-bs-slide="prev">
+                                                                <span class="carousel-control-prev-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Предыдущий</span>
+                                                            </button>
+                                                            <button class="carousel-control-next" type="button"
+                                                                data-bs-target="#carousel-kindergarten5"
+                                                                data-bs-slide="next">
+                                                                <span class="carousel-control-next-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Следующий</span>
+                                                            </button>
+                                                        </div>
+                                                        <p class="card-text d-none">Детский сад Астана - Tom and Jerry.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-lg-4">
+                                                <div class="card h-100 clickable-card" onclick="toggleCard(this)">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">Детский сад Астана - Tom and Jerry</h5>
+                                                        <div id="carousel-kindergarten6" class="carousel slide d-none"
+                                                            data-bs-ride="carousel">
+                                                            <div class="carousel-inner">
+                                                                <div class="carousel-item active">
+                                                                    <img src="https://optim.tildacdn.pro/tild6530-3365-4734-b532-386464326637/-/resize/600x/-/format/webp/__.jpg"
+                                                                        class="d-block w-100" alt="Фото 1">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://avatars.mds.yandex.net/get-altay/11374564/2a00000191bd6d0191a7c4fa1a8b68fba62e/L_height"
+                                                                        class="d-block w-100" alt="Фото 2">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://static.tildacdn.pro/tild3135-3761-4861-b935-666538323931/08.jpg"
+                                                                        class="d-block w-100" alt="Фото 3">
+                                                                </div>
+                                                            </div>
+                                                            <button class="carousel-control-prev" type="button"
+                                                                data-bs-target="#carousel-kindergarten6"
+                                                                data-bs-slide="prev">
+                                                                <span class="carousel-control-prev-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Предыдущий</span>
+                                                            </button>
+                                                            <button class="carousel-control-next" type="button"
+                                                                data-bs-target="#carousel-kindergarten6"
+                                                                data-bs-slide="next">
+                                                                <span class="carousel-control-next-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Следующий</span>
+                                                            </button>
+                                                        </div>
+                                                        <p class="card-text d-none">Рейтинг: 4,8 <br> Адресс: Ахмет
+                                                            Байтұрсынұлы, 5 2 этаж <br>Номер: +77770111055</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-lg-4">
+                                                <div class="card h-100 clickable-card" onclick="toggleCard(this)">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">Дарын </h5>
+                                                        <div id="carousel-kindergarten7" class="carousel slide d-none"
+                                                            data-bs-ride="carousel">
+                                                            <div class="carousel-inner">
+                                                                <div class="carousel-item active">
+                                                                    <img src="https://astanakids.kz/photos/v2P1vF2RA9sNScnQHL9DGvj3lcAh801S717TZ3Ia.png"
+                                                                        class="d-block w-100" alt="Фото 1">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://astanakids.kz/photos/lb9qMmE4zHr01EbX99dFXzLSuf7jzdmtlZaJ3pML.png"
+                                                                        class="d-block w-100" alt="Фото 2">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://astanakids.kz/photos/Ba4gkTKnhgFVvrAZi8pjnFEcI1jX2cRBj82BNWi8.png"
+                                                                        class="d-block w-100" alt="Фото 3">
+                                                                </div>
+                                                            </div>
+                                                            <button class="carousel-control-prev" type="button"
+                                                                data-bs-target="#carousel-kindergarten7"
+                                                                data-bs-slide="prev">
+                                                                <span class="carousel-control-prev-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Предыдущий</span>
+                                                            </button>
+                                                            <button class="carousel-control-next" type="button"
+                                                                data-bs-target="#carousel-kindergarten7"
+                                                                data-bs-slide="next">
+                                                                <span class="carousel-control-next-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Следующий</span>
+                                                            </button>
+                                                        </div>
+                                                        <p class="card-text d-none">Рейтинг: 5 <br> Адресс: город
+                                                            Нур-Cултан, улица 25-я, здание 10/1 <br> Номер: +7 (7172)
+                                                            97-17-57 <br> </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-lg-4">
+                                                <div class="card h-100 clickable-card" onclick="toggleCard(this)">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">НҰРЛЫ</h5>
+                                                        <div id="carousel-kindergarten8" class="carousel slide d-none"
+                                                            data-bs-ride="carousel">
+                                                            <div class="carousel-inner">
+                                                                <div class="carousel-item active">
+                                                                    <img src="https://avatars.mds.yandex.net/get-altay/11860411/2a0000018b87c2dd9eb45c43a2db356d59e6/L_height"
+                                                                        class="d-block w-100" alt="Фото 1">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 2">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 3">
+                                                                </div>
+                                                            </div>
+                                                            <button class="carousel-control-prev" type="button"
+                                                                data-bs-target="#carousel-kindergarten8"
+                                                                data-bs-slide="prev">
+                                                                <span class="carousel-control-prev-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Предыдущий</span>
+                                                            </button>
+                                                            <button class="carousel-control-next" type="button"
+                                                                data-bs-target="#carousel-kindergarten8"
+                                                                data-bs-slide="next">
+                                                                <span class="carousel-control-next-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Следующий</span>
+                                                            </button>
+                                                        </div>
+                                                        <p class="card-text d-none">Адоес-Роза Баглановой 6П,<br>Номер
+                                                            телефона 87015670148</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-lg-4">
+                                                <div class="card h-100 clickable-card" onclick="toggleCard(this)">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">Tilly Willy</h5>
+                                                        <div id="carousel-kindergarten9" class="carousel slide d-none"
+                                                            data-bs-ride="carousel">
+                                                            <div class="carousel-inner">
+                                                                <div class="carousel-item active">
+                                                                    <img src="https://avatars.mds.yandex.net/get-altay/5253303/2a0000017b9e6a64ac69e5b2830a435783e7/L_height"
+                                                                        class="d-block w-100" alt="Фото 1">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://avatars.mds.yandex.net/get-altay/11381866/2a0000018c48c6f93cbf06a7e5ddf4787612/orig"
+                                                                        class="d-block w-100" alt="Фото 2">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://avatars.mds.yandex.net/get-altay/7779554/2a0000018867b7a3f4633218a986886f30e5/L_height"
+                                                                        class="d-block w-100" alt="Фото 3">
+                                                                </div>
+                                                            </div>
+                                                            <button class="carousel-control-prev" type="button"
+                                                                data-bs-target="#carousel-kindergarten9"
+                                                                data-bs-slide="prev">
+                                                                <span class="carousel-control-prev-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Предыдущий</span>
+                                                            </button>
+                                                            <button class="carousel-control-next" type="button"
+                                                                data-bs-target="#carousel-kindergarten9"
+                                                                data-bs-slide="next">
+                                                                <span class="carousel-control-next-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Следующий</span>
+                                                            </button>
+                                                        </div>
+                                                        <p class="card-text d-none">Детский центр развития Tilly Willy
+                                                            Мини-сад.
+                                                            Подготовка к школе.
+                                                            Мини-сад полного дня.
+                                                            Продлёнка для школьников.
+                                                            Тхэквондо.
+                                                            Изо-студия.
+                                                            Танцы.
+                                                            Kids club по выходным.
+                                                            адрес Шамши Калдоякова 4,Номер телефона 87760051222</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-lg-4">
+                                                <div class="card h-100 clickable-card" onclick="toggleCard(this)">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">Svetlyachok</h5>
+                                                        <div id="carousel-kindergarten10" class="carousel slide d-none"
+                                                            data-bs-ride="carousel">
+                                                            <div class="carousel-inner">
+                                                                <div class="carousel-item active">
+                                                                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVGLRm5KQGtA2lDANRK6Zp3T0Pdw2pSKLBPw&s"
+                                                                        class="d-block w-100" alt="Фото 1">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 2">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 3">
+                                                                </div>
+                                                            </div>
+                                                            <button class="carousel-control-prev" type="button"
+                                                                data-bs-target="#carousel-kindergarten10"
+                                                                data-bs-slide="prev">
+                                                                <span class="carousel-control-prev-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Предыдущий</span>
+                                                            </button>
+                                                            <button class="carousel-control-next" type="button"
+                                                                data-bs-target="#carousel-kindergarten10"
+                                                                data-bs-slide="next">
+                                                                <span class="carousel-control-next-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Следующий</span>
+                                                            </button>
+                                                        </div>
+                                                        <p class="card-text d-none">Город Астана,Адрес Акжелкен 10,Номер
+                                                            телефона 87018145555</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-lg-4">
+                                                <div class="card h-100 clickable-card" onclick="toggleCard(this)">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">Балатай</h5>
+                                                        <div id="carousel-kindergarten4" class="carousel slide d-none"
+                                                            data-bs-ride="carousel">
+                                                            <div class="carousel-inner">
+                                                                <div class="carousel-item active">
+                                                                    <img src="https://lh3.googleusercontent.com/p/AF1QipM5KeYlyWQT14N1-lw6r4Wgbp3GDNdtTc5C3WjE=s1600-h380"
+                                                                        class="d-block w-100" alt="Фото 1">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://lh3.googleusercontent.com/p/AF1QipONWwydQ7qT4WrxB0AyZjH7UuI2_soJ2qUs_onc=s1600-h380"
+                                                                        class="d-block w-100" alt="Фото 2">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://astana-online.kz/images/detsad-73-big.jpg"
+                                                                        class="d-block w-100" alt="Фото 3">
+                                                                </div>
+                                                            </div>
+                                                            <button class="carousel-control-prev" type="button"
+                                                                data-bs-target="#carousel-kindergarten4"
+                                                                data-bs-slide="prev">
+                                                                <span class="carousel-control-prev-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Предыдущий</span>
+                                                            </button>
+                                                            <button class="carousel-control-next" type="button"
+                                                                data-bs-target="#carousel-kindergarten4"
+                                                                data-bs-slide="next">
+                                                                <span class="carousel-control-next-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Следующий</span>
+                                                            </button>
+                                                        </div>
+                                                        <p class="card-text d-none">Рейтинг: 5<br>Адресс: ​Переулок
+                                                            Тасшокы, 5 <br> Телефон: +7‒778‒047‒77‒97 <br> </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-lg-4">
+                                                <div class="card h-100 clickable-card" onclick="toggleCard(this)">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">Aldi bi </h5>
+                                                        <div id="carousel-kindergarten4" class="carousel slide d-none"
+                                                            data-bs-ride="carousel">
+                                                            <div class="carousel-inner">
+                                                                <div class="carousel-item active">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 1">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 2">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 3">
+                                                                </div>
+                                                            </div>
+                                                            <button class="carousel-control-prev" type="button"
+                                                                data-bs-target="#carousel-kindergarten4"
+                                                                data-bs-slide="prev">
+                                                                <span class="carousel-control-prev-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Предыдущий</span>
+                                                            </button>
+                                                            <button class="carousel-control-next" type="button"
+                                                                data-bs-target="#carousel-kindergarten4"
+                                                                data-bs-slide="next">
+                                                                <span class="carousel-control-next-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Следующий</span>
+                                                            </button>
+                                                        </div>
+                                                        <p class="card-text d-none">Рейтинг: 3.5 <br> Адресс:Аль-Фараби
+                                                            проспект, 1/1 <br>Номер:+7‒777‒522‒04‒72</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-lg-4">
+                                                <div class="card h-100 clickable-card" onclick="toggleCard(this)">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">Аққанат </h5>
+                                                        <div id="carousel-kindergarten4" class="carousel slide d-none"
+                                                            data-bs-ride="carousel">
+                                                            <div class="carousel-inner">
+                                                                <div class="carousel-item active">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 1">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 2">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 3">
+                                                                </div>
+                                                            </div>
+                                                            <button class="carousel-control-prev" type="button"
+                                                                data-bs-target="#carousel-kindergarten4"
+                                                                data-bs-slide="prev">
+                                                                <span class="carousel-control-prev-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Предыдущий</span>
+                                                            </button>
+                                                            <button class="carousel-control-next" type="button"
+                                                                data-bs-target="#carousel-kindergarten4"
+                                                                data-bs-slide="next">
+                                                                <span class="carousel-control-next-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Следующий</span>
+                                                            </button>
+                                                        </div>
+                                                        <p class="card-text d-none">Полное описание детского сада №4.
+                                                            Здесь можно указать дополнительные детали.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-lg-4">
+                                                <div class="card h-100 clickable-card" onclick="toggleCard(this)">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">Детский сад №4</h5>
+                                                        <div id="carousel-kindergarten4" class="carousel slide d-none"
+                                                            data-bs-ride="carousel">
+                                                            <div class="carousel-inner">
+                                                                <div class="carousel-item active">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 1">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 2">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 3">
+                                                                </div>
+                                                            </div>
+                                                            <button class="carousel-control-prev" type="button"
+                                                                data-bs-target="#carousel-kindergarten4"
+                                                                data-bs-slide="prev">
+                                                                <span class="carousel-control-prev-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Предыдущий</span>
+                                                            </button>
+                                                            <button class="carousel-control-next" type="button"
+                                                                data-bs-target="#carousel-kindergarten4"
+                                                                data-bs-slide="next">
+                                                                <span class="carousel-control-next-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Следующий</span>
+                                                            </button>
+                                                        </div>
+                                                        <p class="card-text d-none">Рейтинг:4.5 <br> Номер:.
+                                                            Здесь можно указать дополнительные детали.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-lg-4">
+                                                <div class="card h-100 clickable-card" onclick="toggleCard(this)">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">Детский сад №4</h5>
+                                                        <div id="carousel-kindergarten4" class="carousel slide d-none"
+                                                            data-bs-ride="carousel">
+                                                            <div class="carousel-inner">
+                                                                <div class="carousel-item active">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 1">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 2">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 3">
+                                                                </div>
+                                                            </div>
+                                                            <button class="carousel-control-prev" type="button"
+                                                                data-bs-target="#carousel-kindergarten4"
+                                                                data-bs-slide="prev">
+                                                                <span class="carousel-control-prev-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Предыдущий</span>
+                                                            </button>
+                                                            <button class="carousel-control-next" type="button"
+                                                                data-bs-target="#carousel-kindergarten4"
+                                                                data-bs-slide="next">
+                                                                <span class="carousel-control-next-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Следующий</span>
+                                                            </button>
+                                                        </div>
+                                                        <p class="card-text d-none">Полное описание детского сада №4.
+                                                            Здесь можно указать дополнительные детали.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-lg-4">
+                                                <div class="card h-100 clickable-card" onclick="toggleCard(this)">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">Детский сад №4</h5>
+                                                        <div id="carousel-kindergarten4" class="carousel slide d-none"
+                                                            data-bs-ride="carousel">
+                                                            <div class="carousel-inner">
+                                                                <div class="carousel-item active">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 1">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 2">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 3">
+                                                                </div>
+                                                            </div>
+                                                            <button class="carousel-control-prev" type="button"
+                                                                data-bs-target="#carousel-kindergarten4"
+                                                                data-bs-slide="prev">
+                                                                <span class="carousel-control-prev-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Предыдущий</span>
+                                                            </button>
+                                                            <button class="carousel-control-next" type="button"
+                                                                data-bs-target="#carousel-kindergarten4"
+                                                                data-bs-slide="next">
+                                                                <span class="carousel-control-next-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Следующий</span>
+                                                            </button>
+                                                        </div>
+                                                        <p class="card-text d-none">Полное описание детского сада №4.
+                                                            Здесь можно указать дополнительные детали.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-lg-4">
+                                                <div class="card h-100 clickable-card" onclick="toggleCard(this)">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">Детский сад №4</h5>
+                                                        <div id="carousel-kindergarten4" class="carousel slide d-none"
+                                                            data-bs-ride="carousel">
+                                                            <div class="carousel-inner">
+                                                                <div class="carousel-item active">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 1">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 2">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 3">
+                                                                </div>
+                                                            </div>
+                                                            <button class="carousel-control-prev" type="button"
+                                                                data-bs-target="#carousel-kindergarten4"
+                                                                data-bs-slide="prev">
+                                                                <span class="carousel-control-prev-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Предыдущий</span>
+                                                            </button>
+                                                            <button class="carousel-control-next" type="button"
+                                                                data-bs-target="#carousel-kindergarten4"
+                                                                data-bs-slide="next">
+                                                                <span class="carousel-control-next-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Следующий</span>
+                                                            </button>
+                                                        </div>
+                                                        <p class="card-text d-none">Полное описание детского сада №4.
+                                                            Здесь можно указать дополнительные детали.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-lg-4">
+                                                <div class="card h-100 clickable-card" onclick="toggleCard(this)">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">Детский сад №4</h5>
+                                                        <div id="carousel-kindergarten4" class="carousel slide d-none"
+                                                            data-bs-ride="carousel">
+                                                            <div class="carousel-inner">
+                                                                <div class="carousel-item active">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 1">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 2">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 3">
+                                                                </div>
+                                                            </div>
+                                                            <button class="carousel-control-prev" type="button"
+                                                                data-bs-target="#carousel-kindergarten4"
+                                                                data-bs-slide="prev">
+                                                                <span class="carousel-control-prev-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Предыдущий</span>
+                                                            </button>
+                                                            <button class="carousel-control-next" type="button"
+                                                                data-bs-target="#carousel-kindergarten4"
+                                                                data-bs-slide="next">
+                                                                <span class="carousel-control-next-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Следующий</span>
+                                                            </button>
+                                                        </div>
+                                                        <p class="card-text d-none">Полное описание детского сада №4.
+                                                            Здесь можно указать дополнительные детали.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-lg-4">
+                                                <div class="card h-100 clickable-card" onclick="toggleCard(this)">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">Детский сад №4</h5>
+                                                        <div id="carousel-kindergarten4" class="carousel slide d-none"
+                                                            data-bs-ride="carousel">
+                                                            <div class="carousel-inner">
+                                                                <div class="carousel-item active">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 1">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 2">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 3">
+                                                                </div>
+                                                            </div>
+                                                            <button class="carousel-control-prev" type="button"
+                                                                data-bs-target="#carousel-kindergarten4"
+                                                                data-bs-slide="prev">
+                                                                <span class="carousel-control-prev-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Предыдущий</span>
+                                                            </button>
+                                                            <button class="carousel-control-next" type="button"
+                                                                data-bs-target="#carousel-kindergarten4"
+                                                                data-bs-slide="next">
+                                                                <span class="carousel-control-next-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Следующий</span>
+                                                            </button>
+                                                        </div>
+                                                        <p class="card-text d-none">Полное описание детского сада №4.
+                                                            Здесь можно указать дополнительные детали.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-lg-4">
+                                                <div class="card h-100 clickable-card" onclick="toggleCard(this)">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">Детский сад №4</h5>
+                                                        <div id="carousel-kindergarten4" class="carousel slide d-none"
+                                                            data-bs-ride="carousel">
+                                                            <div class="carousel-inner">
+                                                                <div class="carousel-item active">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 1">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 2">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 3">
+                                                                </div>
+                                                            </div>
+                                                            <button class="carousel-control-prev" type="button"
+                                                                data-bs-target="#carousel-kindergarten4"
+                                                                data-bs-slide="prev">
+                                                                <span class="carousel-control-prev-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Предыдущий</span>
+                                                            </button>
+                                                            <button class="carousel-control-next" type="button"
+                                                                data-bs-target="#carousel-kindergarten4"
+                                                                data-bs-slide="next">
+                                                                <span class="carousel-control-next-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Следующий</span>
+                                                            </button>
+                                                        </div>
+                                                        <p class="card-text d-none">Полное описание детского сада №4.
+                                                            Здесь можно указать дополнительные детали.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-lg-4">
+                                                <div class="card h-100 clickable-card" onclick="toggleCard(this)">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">Детский сад №4</h5>
+                                                        <div id="carousel-kindergarten4" class="carousel slide d-none"
+                                                            data-bs-ride="carousel">
+                                                            <div class="carousel-inner">
+                                                                <div class="carousel-item active">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 1">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 2">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 3">
+                                                                </div>
+                                                            </div>
+                                                            <button class="carousel-control-prev" type="button"
+                                                                data-bs-target="#carousel-kindergarten4"
+                                                                data-bs-slide="prev">
+                                                                <span class="carousel-control-prev-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Предыдущий</span>
+                                                            </button>
+                                                            <button class="carousel-control-next" type="button"
+                                                                data-bs-target="#carousel-kindergarten4"
+                                                                data-bs-slide="next">
+                                                                <span class="carousel-control-next-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Следующий</span>
+                                                            </button>
+                                                        </div>
+                                                        <p class="card-text d-none">Полное описание детского сада №4.
+                                                            Здесь можно указать дополнительные детали.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-lg-4">
+                                                <div class="card h-100 clickable-card" onclick="toggleCard(this)">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">Детский сад №4</h5>
+                                                        <div id="carousel-kindergarten4" class="carousel slide d-none"
+                                                            data-bs-ride="carousel">
+                                                            <div class="carousel-inner">
+                                                                <div class="carousel-item active">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 1">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 2">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 3">
+                                                                </div>
+                                                            </div>
+                                                            <button class="carousel-control-prev" type="button"
+                                                                data-bs-target="#carousel-kindergarten4"
+                                                                data-bs-slide="prev">
+                                                                <span class="carousel-control-prev-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Предыдущий</span>
+                                                            </button>
+                                                            <button class="carousel-control-next" type="button"
+                                                                data-bs-target="#carousel-kindergarten4"
+                                                                data-bs-slide="next">
+                                                                <span class="carousel-control-next-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Следующий</span>
+                                                            </button>
+                                                        </div>
+                                                        <p class="card-text d-none">Полное описание детского сада №4.
+                                                            Здесь можно указать дополнительные детали.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-lg-4">
+                                                <div class="card h-100 clickable-card" onclick="toggleCard(this)">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">Детский сад №4</h5>
+                                                        <div id="carousel-kindergarten4" class="carousel slide d-none"
+                                                            data-bs-ride="carousel">
+                                                            <div class="carousel-inner">
+                                                                <div class="carousel-item active">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 1">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 2">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 3">
+                                                                </div>
+                                                            </div>
+                                                            <button class="carousel-control-prev" type="button"
+                                                                data-bs-target="#carousel-kindergarten4"
+                                                                data-bs-slide="prev">
+                                                                <span class="carousel-control-prev-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Предыдущий</span>
+                                                            </button>
+                                                            <button class="carousel-control-next" type="button"
+                                                                data-bs-target="#carousel-kindergarten4"
+                                                                data-bs-slide="next">
+                                                                <span class="carousel-control-next-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Следующий</span>
+                                                            </button>
+                                                        </div>
+                                                        <p class="card-text d-none">Полное описание детского сада №4.
+                                                            Здесь можно указать дополнительные детали.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-lg-4">
+                                                <div class="card h-100 clickable-card" onclick="toggleCard(this)">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">Детский сад №4</h5>
+                                                        <div id="carousel-kindergarten4" class="carousel slide d-none"
+                                                            data-bs-ride="carousel">
+                                                            <div class="carousel-inner">
+                                                                <div class="carousel-item active">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 1">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 2">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 3">
+                                                                </div>
+                                                            </div>
+                                                            <button class="carousel-control-prev" type="button"
+                                                                data-bs-target="#carousel-kindergarten4"
+                                                                data-bs-slide="prev">
+                                                                <span class="carousel-control-prev-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Предыдущий</span>
+                                                            </button>
+                                                            <button class="carousel-control-next" type="button"
+                                                                data-bs-target="#carousel-kindergarten4"
+                                                                data-bs-slide="next">
+                                                                <span class="carousel-control-next-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Следующий</span>
+                                                            </button>
+                                                        </div>
+                                                        <p class="card-text d-none">Полное описание детского сада №4.
+                                                            Здесь можно указать дополнительные детали.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-lg-4">
+                                                <div class="card h-100 clickable-card" onclick="toggleCard(this)">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">Детский сад №4</h5>
+                                                        <div id="carousel-kindergarten4" class="carousel slide d-none"
+                                                            data-bs-ride="carousel">
+                                                            <div class="carousel-inner">
+                                                                <div class="carousel-item active">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 1">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 2">
+                                                                </div>
+                                                                <div class="carousel-item">
+                                                                    <img src="https://via.placeholder.com/150"
+                                                                        class="d-block w-100" alt="Фото 3">
+                                                                </div>
+                                                            </div>
+                                                            <button class="carousel-control-prev" type="button"
+                                                                data-bs-target="#carousel-kindergarten4"
+                                                                data-bs-slide="prev">
+                                                                <span class="carousel-control-prev-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Предыдущий</span>
+                                                            </button>
+                                                            <button class="carousel-control-next" type="button"
+                                                                data-bs-target="#carousel-kindergarten4"
+                                                                data-bs-slide="next">
+                                                                <span class="carousel-control-next-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="visually-hidden">Следующий</span>
+                                                            </button>
+                                                        </div>
+                                                        <p class="card-text d-none">Полное описание детского сада №4.
+                                                            Здесь можно указать дополнительные детали.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <section class="py-5 bg-light">
+            <div class="container px-5">
+                <h2 class="text-center mb-4">Отзывы пользователей</h2>
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <p class="card-text">"Отличный сервис! Нашли идеальный детский сад для нашего ребенка."
+                                </p>
+                                <h6 class="card-subtitle text-muted">- Анна Иванова</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <p class="card-text">"Очень удобный поиск и фильтры. Рекомендую всем родителям."</p>
+                                <h6 class="card-subtitle text-muted">- Сергей Петров</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <p class="card-text">"Большой выбор детских садов и подробные описания."</p>
+                                <h6 class="card-subtitle text-muted">- Ольга Смирнова</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="py-5">
+            <div class="container px-5">
+                <h2 class="text-center mb-4">Часто задаваемые вопросы</h2>
+                <div class="accordion" id="faqAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="faqHeading1">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#faqCollapse1" aria-expanded="true" aria-controls="faqCollapse1">
+                                Как найти детский сад в моем районе?
+                            </button>
+                        </h2>
+                        <div id="faqCollapse1" class="accordion-collapse collapse show" aria-labelledby="faqHeading1"
+                            data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Используйте фильтры на сайте, чтобы выбрать район и другие параметры поиска.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="faqHeading2">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#faqCollapse2" aria-expanded="false" aria-controls="faqCollapse2">
+                                Как оставить отзыв о детском саде?
+                            </button>
+                        </h2>
+                        <div id="faqCollapse2" class="accordion-collapse collapse" aria-labelledby="faqHeading2"
+                            data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Перейдите на страницу детского сада и заполните форму для отзыва.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="faqHeading3">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#faqCollapse3" aria-expanded="false" aria-controls="faqCollapse3">
+                                Как связаться с администрацией сайта?
+                            </button>
+                        </h2>
+                        <div id="faqCollapse3" class="accordion-collapse collapse" aria-labelledby="faqHeading3"
+                            data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Вы можете использовать форму на странице "Контакты" для связи с нами.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="py-5 bg-light">
+            <div class="container px-5">
+                <h2 class="text-center mb-4">Наши преимущества</h2>
+                <div class="row g-4">
+                    <div class="col-md-4 text-center">
+                        <i class="bi bi-search text-primary" style="font-size: 3rem;"></i>
+                        <h5 class="mt-3">Удобный поиск</h5>
+                        <p>Фильтры и сортировка помогут вам быстро найти подходящий детский сад.</p>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <i class="bi bi-star text-primary" style="font-size: 3rem;"></i>
+                        <h5 class="mt-3">Рейтинги и отзывы</h5>
+                        <p>Реальные отзывы родителей помогут вам сделать правильный выбор.</p>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <i class="bi bi-geo-alt text-primary" style="font-size: 3rem;"></i>
+                        <h5 class="mt-3">Локализация</h5>
+                        <p>Мы показываем детские сады, расположенные рядом с вами.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="py-5">
+            <div class="container px-5 text-center">
+                <h2 class="mb-4">Подпишитесь на наши новости</h2>
+                <form class="row g-3 justify-content-center">
+                    <div class="col-auto">
+                        <input type="email" class="form-control" placeholder="Введите ваш email" required />
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary">Подписаться</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+        <section class="py-5 bg-light">
+            <div class="container px-5">
+                <h2 class="text-center mb-4">Оставить отзыв</h2>
+                <form onsubmit="submitReview(event)">
+                    <div class="mb-3">
+                        <label for="reviewText" class="form-label">Ваш отзыв:</label>
+                        <textarea class="form-control" id="reviewText" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="reviewRating" class="form-label">Рейтинг:</label>
+                        <select class="form-select" id="reviewRating" required>
+                            <option value="1">1 звезда</option>
+                            <option value="2">2 звезды</option>
+                            <option value="3">3 звезды</option>
+                            <option value="4">4 звезды</option>
+                            <option value="5">5 звезд</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Отправить</button>
+                </form>
+            </div>
+        </section>
+        <!-- Footer-->
+        <footer class="py-4 mt-auto">
+            <div class="container px-5">
+                <div class="row align-items-center justify-content-between flex-column flex-sm-row">
+                    <div class="col-auto">
+                        <div class="small m-0">Copyright &copy; Findet.kz 2023</div>
+                    </div>
+                    <div class="col-auto">
+                        <a class="small" href="#!">Политика конфиденциальности</a>
+                        <span class="mx-1">&middot;</span>
+                        <a class="small" href="#!">Условия использования</a>
+                        <span class="mx-1">&middot;</span>
+                        <a class="small" href="#!">Контакты</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+    <button id="backToTop" onclick="scrollToTop()">↑</button>
+    <!-- Bootstrap core JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Подключение API Яндекс.Карт -->
+    <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+    <script>
+        ymaps.ready(function () {
+            document.getElementById('map-loader').style.display = 'none';
+            var map = new ymaps.Map("map", {
+                center: [51.169392, 71.449074], // Координаты центра (Астана)
+                zoom: 12
+            });
+
+            // Добавляем метки для 10 детских садов, разбросанных по городу
+            var kindergartens = [
+                { coords: [51.127581, 71.481167], name: 'Нурорда', description: 'просп. Рахимжана Кошкарбаева, 11/1 <br> Номер телефона: +7 (702) 041-61-90 <br> Цена: 30.000 - 60.000 ', id: 'nurorda' },
+                { coords: [51.175392, 71.460074], name: 'Детский сад №2', description: 'Описание детского сада №2', id: 'kindergarten2' },
+                { coords: [51.180392, 71.440074], name: 'Детский сад №3', description: 'Описание детского сада №3', id: 'kindergarten3' },
+                { coords: [51.155392, 71.450074], name: 'Детский сад №4', description: 'Описание детского сада №4' },
+                { coords: [51.165392, 71.470074], name: 'Детский сад №5', description: 'Описание детского сада №5' },
+                { coords: [51.170392, 71.420074], name: 'Детский сад №6', description: 'Описание детского сада №6' },
+                { coords: [51.185392, 71.455074], name: 'Детский сад №7', description: 'Описание детского сада №7' },
+                { coords: [51.150392, 71.435074], name: 'Детский сад №8', description: 'Описание детского сада №8' },
+                { coords: [51.160892, 71.445074], name: 'Детский сад №9', description: 'Описание детского сада №9' },
+                { coords: [51.175892, 71.425074], name: 'Детский сад №10', description: 'Описание детского сада №10' }
+            ];
+
+            kindergartens.forEach(function (kindergarten) {
+                var placemark = new ymaps.Placemark(kindergarten.coords, {
+                    balloonContent: `<strong>${kindergarten.name}</strong><br>${kindergarten.description}`
+                });
+
+                placemark.events.add('click', function () {
+                    highlightCard(kindergarten.id);
+                });
+
+                map.geoObjects.add(placemark);
+            });
+        });
+
+        function highlightCard(id) {
+            // Убираем выделение и закрываем описание у всех карточек
+            document.querySelectorAll('.clickable-card').forEach(card => {
+                card.classList.remove('expanded-card');
+                card.querySelector('.card-text').classList.add('d-none');
+                const carousel = card.querySelector('.carousel');
+                if (carousel) {
+                    carousel.classList.add('d-none');
+                }
+            });
+
+            // Прокручиваем к нужной карточке, выделяем её и открываем описание
+            const card = document.getElementById(id);
+            if (card) {
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                card.classList.add('expanded-card');
+                card.querySelector('.card-text').classList.remove('d-none');
+                const carousel = card.querySelector('.carousel');
+                if (carousel) {
+                    carousel.classList.remove('d-none');
+                }
+            }
+        }
+
+        function toggleCard(card) {
+            const description = card.querySelector('.card-text');
+            const carousel = card.querySelector('.carousel');
+            if (description.classList.contains('d-none')) {
+                card.classList.add('expanded-card');
+                description.classList.remove('d-none');
+                if (carousel) {
+                    carousel.classList.remove('d-none');
+                }
+            } else {
+                card.classList.remove('expanded-card');
+                description.classList.add('d-none');
+                if (carousel) {
+                    carousel.classList.add('d-none');
+                }
+            }
+        }
+
+        function searchKindergartens() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.querySelectorAll('#kindergartenCatalog .card');
+            cards.forEach(card => {
+                const title = card.querySelector('.card-title').textContent.toLowerCase();
+                if (title.includes(query)) {
+                    card.parentElement.style.display = 'block';
+                } else {
+                    card.parentElement.style.display = 'none';
+                }
+            });
+        }
+
+        window.addEventListener('load', () => {
+            document.body.classList.add('loaded');
+        });
+        const backToTop = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTop.style.display = 'flex';
+            } else {
+                backToTop.style.display = 'none';
+            }
+        });
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function applyFilters() {
+            const priceFrom = document.getElementById('priceFrom').value;
+            const priceTo = document.getElementById('priceTo').value;
+            const district = document.getElementById('districtSelect').value;
+            const gardenType = document.getElementById('gardenTypeSelect').value;
+            const ages = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value);
+
+            console.log('Фильтры:', { priceFrom, priceTo, district, gardenType, ages });
+            // Здесь можно добавить логику фильтрации карточек
+        }
+
+        function sortKindergartens() {
+            const sortBy = document.getElementById('sortSelect').value;
+            console.log('Сортировка по:', sortBy);
+            // Здесь можно добавить логику сортировки карточек
+        }
+
+        function resetFilters() {
+            document.getElementById('priceFrom').value = '';
+            document.getElementById('priceTo').value = '';
+            document.getElementById('districtSelect').value = '';
+            document.getElementById('gardenTypeSelect').value = '';
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+            document.getElementById('ratingFilter').value = 3;
+            document.getElementById('ratingOutput').textContent = 3;
+            console.log('Фильтры сброшены');
+            // Здесь можно добавить логику сброса фильтров
+        }
+
+        function submitReview(event) {
+            event.preventDefault();
+            const reviewText = document.getElementById('reviewText').value;
+            const reviewRating = document.getElementById('reviewRating').value;
+            console.log('Отзыв отправлен:', { reviewText, reviewRating });
+            // Здесь можно добавить логику отправки отзыва
+        }
+
+        function toggleSortByRating() {
+            const isChecked = document.getElementById('sortByRatingMain').checked;
+            const ratingValue = document.getElementById('ratingFilterMain').value;
+            console.log('Сортировка по рейтингу:', isChecked, 'Рейтинг:', ratingValue);
+            // Здесь можно добавить логику сортировки карточек по рейтингу
+        }
+    </script>
+</body>
+
+</html>
